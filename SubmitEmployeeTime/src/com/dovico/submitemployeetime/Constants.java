@@ -14,7 +14,7 @@ public class Constants {
 	// Employee ID if the user provides the Data Access Token from the DB Options view of DOVICO
 	public static Long ADMIN_TOKEN_EMPLOYEE_ID = 99L;
 	
-	public static String NONE_ITEM_ID = "0"; 
+	public static Long NONE_ITEM_ID = 0L; 
 	
 	// The REST API returns and expects dates in this format
 	public static String XML_DATE_FORMAT = "yyyy-MM-dd";

@@ -20,6 +20,12 @@ import javax.swing.SwingConstants;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.dovico.commonlibrary.APIRequestResult;
+import com.dovico.commonlibrary.CDatePicker;
+import com.dovico.commonlibrary.data.CEmployee;
+import com.dovico.commonlibrary.data.CTimeEntry;
+
 import java.awt.Color;
 
 
@@ -207,16 +213,17 @@ public class CPanel_TimeEntries extends JPanel {
 			// Show the loading/processing indicator
 			showProcessing(true);
 			
+			
 			// Submit the selected employee's time. If successful, reload the grid to reflect the new time entry statuses...
 			CEmployee eEmployee = (CEmployee)m_ddlEmployees.getSelectedItem();
-			if(eEmployee.submitTime(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), m_dtDateRangeStart, m_dtDateRangeEnd)) { 
-				// Reload the grid so that the new statuses are reflected
+			APIRequestResult aRequestResult = new APIRequestResult(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), Constants.API_VERSION_TARGETED, true);
+			if(CTimeEntry.submitTime(eEmployee.getID(), m_dtDateRangeStart, m_dtDateRangeEnd, aRequestResult)) {
+				// Reload the grid so that the new statuses are reflected and then tell the user we're done
 				reloadTimeEntryGrid();
-				
-				// Tell the user we're done
 				JOptionPane.showMessageDialog(null, "Done", "Done", JOptionPane.INFORMATION_MESSAGE); 
-			} // End if
+			} // End if(CTimeEntry.submitTime(eEmployee.getID(), m_dtDateRangeStart, m_dtDateRangeEnd, aRequestResult))
 						
+			
 			// Hide the loading/processing indicator (just in case the submitTime call fails)
 			showProcessing(false);
 		} // End if(m_tmTimeEntryGridModel.getRowCount() == 0)
@@ -227,11 +234,13 @@ public class CPanel_TimeEntries extends JPanel {
 	{
 		// Show the loading/processing indicator
 		showProcessing(true);
-
 		
-		// Load in the list of employees into the drop-down
+		// Make sure our list of employees is empty before we fill it with more employees
 		m_EmployeeDataModel.removeAllElements();
-		m_EmployeeDataModel.loadEmployeeData(m_EmployeeDataModel.getURIForFirstPage(), m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken());
+
+		// Load in the employee data
+		APIRequestResult aRequestResult = new APIRequestResult(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), Constants.API_VERSION_TARGETED, true);
+		m_EmployeeDataModel.loadEmployeeData(aRequestResult);
 
 		// If there were employees loaded, cause the first item in the list to be selected by default
 		if(m_EmployeeDataModel.getSize() > 0) { m_EmployeeDataModel.setSelectedItem(m_EmployeeDataModel.getElementAt(0)); }
@@ -253,20 +262,26 @@ public class CPanel_TimeEntries extends JPanel {
 		
 		// If we have a valid date range selected then...
 		if(ValidateDateRange(true)) {
-			// Cause the selected employee to have its time entries loaded in
+			// Load in the selected employee's time entries
 			CEmployee eEmployee = (CEmployee)m_ddlEmployees.getSelectedItem();
-			ArrayList<CTimeEntry> lstTimeEntries = eEmployee.getTimeEntries(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), m_dtDateRangeStart, m_dtDateRangeEnd);
+			APIRequestResult aRequestResult = new APIRequestResult(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), Constants.API_VERSION_TARGETED, true);
+			ArrayList<CTimeEntry> lstTimeEntries = new ArrayList<CTimeEntry>();
+			loadTimeEntryData(eEmployee.getID(), m_dtDateRangeStart, m_dtDateRangeEnd, aRequestResult, lstTimeEntries);
 			
 			CTimeEntry aTimeEntry = null;
-			String sStatus = "";
+			String sStatus = "", sProjectTaskName = "", sStartStopTotal = "";
 						
 			// Loop through the time entries adding them to the grid...			
 			int iCount = lstTimeEntries.size();
 			for(int iIndex = 0; iIndex < iCount; iIndex++) {
-				// Grab the current time entry and add it to the grid
+				// Grab the current time entry item and the required values from the item
 				aTimeEntry = lstTimeEntries.get(iIndex);
-				sStatus = aTimeEntry.getStatus();
-				m_tmTimeEntryGridModel.addRow(new Object[] { sStatus, aTimeEntry.getDisplayProjectTaskName(), getCaptionFromDate(aTimeEntry.getDate()), aTimeEntry.getDisplayStartStop(), aTimeEntry.getDescription() });
+				sStatus = aTimeEntry.getSheetStatus();
+				sProjectTaskName = getProjectTaskName(aTimeEntry.getClientID(), aTimeEntry.getClientName(), aTimeEntry.getProjectName(), aTimeEntry.getTaskName());
+				sStartStopTotal = getStartStopTotal(aTimeEntry.getStartTime(), aTimeEntry.getStopTime(), aTimeEntry.getTotalHours());
+				
+				// Add the time entry data to the grid
+				m_tmTimeEntryGridModel.addRow(new Object[] { sStatus, sProjectTaskName, getCaptionFromDate(aTimeEntry.getDate()), sStartStopTotal, aTimeEntry.getDescription() });
 				
 				// If the current entry is Not Submitted or is Rejected then it can be submitted so flip the flag 
 				if(sStatus.equals(Constants.STATUS_NOT_SUBMITTED) || sStatus.equals(Constants.STATUS_REJECTED)) { m_bHasTimeThatCanBeSubmitted = true; }				
@@ -279,10 +294,49 @@ public class CPanel_TimeEntries extends JPanel {
 	}
 	
 	
+	// Helper to load in the employee's time entries within the date range specified
+	private void loadTimeEntryData(Long lEmployeeID, Date dtDateRangeStart, Date dtDateRangeEnd, APIRequestResult aRequestResult, 
+			ArrayList<CTimeEntry> lstReturnTimeEntries) {	
+		// Get the current page of data (if the URI was not specified -first page requested- CTimeEntryUtil will set the URI for the first page of data)		
+		lstReturnTimeEntries.addAll(CTimeEntry.getListForEmployee(lEmployeeID, dtDateRangeStart, dtDateRangeEnd, aRequestResult));
+		
+		
+		// If there is a next page of data to load in then...(load it in)
+		String sNextPageURI = aRequestResult.getResultNextPageURI();
+		if(!sNextPageURI.equals(Constants.URI_NOT_AVAILABLE)) { 
+			// Call this function again with the URI for the next page of items
+			aRequestResult.setRequestURI(sNextPageURI);
+			loadTimeEntryData(lEmployeeID, dtDateRangeStart, dtDateRangeEnd, aRequestResult, lstReturnTimeEntries);
+		} // End if(!sNextPageURI.equals(Constants.URI_NOT_AVAILABLE))
+	}
+	
+
+	
+	
+	
 	// Returns the names for the columns in the Time Entry table/grid
 	private String[] getColumnNamesForTimeEntryGrid() {
 		String[] arrColNames = { "Status", "Project - Task", "Date", "Start - Stop (Total Hours)", "Description" };	
 		return arrColNames;
+	}
+	
+	
+	// Helper to return a string showing the "[Client - ] Project - Task" names for display purposes 
+	private String getProjectTaskName(Long lClientID, String sClientName, String sProjectName, String sTaskName){
+		// Concatenate the Project and Task names together
+		String sReturnVal = (sProjectName + " - " + sTaskName);
+		
+		// If we have a Client then add the Client name to the beginning of the string
+		if(!lClientID.equals(Constants.NONE_ITEM_ID)) { sReturnVal = (sClientName + " - " + sReturnVal); }
+		
+		// Return the string to the caller
+		return sReturnVal;
+	}
+	
+	
+	// Helper to return a string showing the "Start - Stop (Total)" values for display purposes
+	private String getStartStopTotal(String sStartTime, String sStopTime, double dTotalHours){
+		return (sStartTime + " - " + sStopTime + " (" + Double.toString(dTotalHours) + (dTotalHours == 1.0 ? " hr)" : " hrs)"));
 	}
 	
 	
