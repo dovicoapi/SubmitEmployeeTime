@@ -3,6 +3,7 @@ package com.dovico.submitemployeetime;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.*;
 
 
@@ -27,12 +28,24 @@ public class CCommonUILogic {
 	
 	// Overloaded constructor
 	public CCommonUILogic(Container cContainer, ActionListener alSettingsChanged) {
-		// I don't like the look of the default 'Metal' UI. Here we tell the UI Manager to use the default look of the OS we're on
-		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
-		catch (UnsupportedLookAndFeelException e) { }
-		catch (ClassNotFoundException e) { }
-		catch (InstantiationException e) { }
-		catch (IllegalAccessException e) { }
+		// Change the look from the Metal UI which I find kind of ugly
+		try {
+			// Loop through the various LookAndFeel items to see if 'Nimbus' exists. If yes then...
+		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        } // End if ("Nimbus".equals(info.getName()))
+		    } // End of the for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) loop.
+		}catch (Exception e) {
+			// Switch the look to the system default
+			try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+			catch (UnsupportedLookAndFeelException e2) { }
+			catch (ClassNotFoundException e2) { }
+			catch (InstantiationException e2) { }
+			catch (IllegalAccessException e2) { }
+		} // End of the catch (Exception e) statement.
+
 		
 		
 		// Remember the action listener for when the settings are changed (so that we can tell the proper class that the settings have changed and they need to be

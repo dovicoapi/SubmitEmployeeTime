@@ -235,8 +235,9 @@ public class CPanel_TimeEntries extends JPanel {
 		// Show the loading/processing indicator
 		showProcessing(true);
 		
-		// Make sure our list of employees is empty before we fill it with more employees
+		// Make sure our list of employees and grid are empty before we fill the employee list with more employees
 		m_EmployeeDataModel.removeAllElements();
+		clearTimeEntryGrid();
 
 		// Load in the employee data
 		APIRequestResult aRequestResult = new APIRequestResult(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), Constants.API_VERSION_TARGETED, true);
@@ -251,10 +252,12 @@ public class CPanel_TimeEntries extends JPanel {
 	}
 	
 	
+	private void clearTimeEntryGrid() { while(m_tmTimeEntryGridModel.getRowCount() > 0) { m_tmTimeEntryGridModel.removeRow(0); } }
+	
 	private void reloadTimeEntryGrid(){	
 		// Make sure the grid of time entries is cleared
-		while(m_tmTimeEntryGridModel.getRowCount() > 0) { m_tmTimeEntryGridModel.removeRow(0); }
-		
+		clearTimeEntryGrid();
+				
 		// Set the flag to false to indicate that there is no time available to be submitted (if we load some that is Rejected or not yet submitted, we will flip this
 		// flag - used to inform the user when they click the Submit button - saves processing too since we don't have to post a submit request and reload the time
 		// entries if there is nothing to submit)
