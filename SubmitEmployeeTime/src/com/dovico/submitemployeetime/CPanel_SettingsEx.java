@@ -35,9 +35,10 @@ public class CPanel_SettingsEx extends CPanel_Settings {
 	
 	
 	@Override
-	public void setSettingsData(String sConsumerSecret, String sDataAccessToken, Long lEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) {
+	public void setSettingsData(String sConsumerSecret, String sDataAccessToken, String sApiVersionTargeted, Long lEmployeeID, String sEmployeeFirstName, 
+			String sEmployeeLastName) {
 		// Pass the information to the parent class that it needs
-		super.setSettingsData(sConsumerSecret, sDataAccessToken, lEmployeeID, sEmployeeFirstName, sEmployeeLastName);
+		super.setSettingsData(sConsumerSecret, sDataAccessToken, sApiVersionTargeted, lEmployeeID, sEmployeeFirstName, sEmployeeLastName);
 		
 		// TO DO: Initialize our own controls if need be
 	}

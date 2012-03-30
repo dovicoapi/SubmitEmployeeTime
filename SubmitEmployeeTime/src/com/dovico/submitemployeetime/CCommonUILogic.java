@@ -85,7 +85,7 @@ public class CCommonUILogic {
 		
 		// Tell the Settings pane what the settings are (we are not concerned about the logged in employee's First and Last name in this app but rather than have
 		// to write upgrade code, like the code to come below, if that every changes, we grab and store the values just in case)
-		m_pSettingsTab.setSettingsData(m_sConsumerSecret, m_sDataAccessToken, m_lEmployeeID, m_sEmployeeFirstName, m_sEmployeeLastName);
+		m_pSettingsTab.setSettingsData(m_sConsumerSecret, m_sDataAccessToken, Constants.API_VERSION_TARGETED, m_lEmployeeID, m_sEmployeeFirstName, m_sEmployeeLastName);
 		
 		// If either token value is empty then...
 		if(bIsConsumerSecretEmpty || bIsDataAccessTokenEmpty) {
