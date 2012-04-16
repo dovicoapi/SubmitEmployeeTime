@@ -25,7 +25,15 @@ public class Constants {
 	public static String NO_DATE_SELECTED = "[Not Selected]";
 	
 	
-	// We don't need them so I didn't define them but other statuses for time are A (approved) and U (under review)
+	// The possible statuses from the API 
+	public static String STATUS_APPROVED = "A";
 	public static String STATUS_NOT_SUBMITTED = "N";
+	public static String STATUS_UNDER_REVIEW = "U";	
 	public static String STATUS_REJECTED = "R";	
+	
+	// The easier to read versions of the statuses for display purposes
+	public static String STATUS_FULLNAME_APPROVED = "Approved";
+	public static String STATUS_FULLNAME_NOT_SUBMITTED = "Not Submitted";
+	public static String STATUS_FULLNAME_UNDER_REVIEW = "Under Review";
+	public static String STATUS_FULLNAME_REJECTED = "Rejected";	
 }
