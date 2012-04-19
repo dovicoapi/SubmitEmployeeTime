@@ -1,6 +1,11 @@
 package com.dovico.submitemployeetime;
 
 public class Constants {
+	// Key for the Consumer Secret field on the Settings dialog (if you leave this blank, the Consumer Secret field will be visible allowing the user to specify their
+	// own Consumer Secret - If you want to keep the Consumer Secret from the users of this app, place it here and the CPanel_SettingsEx class will tell the settings
+	// pane not to show the field)
+	public static String CONSUMER_SECRET_API_TOKEN = "";
+	
 	// Keys for storing/caching data
 	public static String PREFS_KEY_CONSUMER_SECRET = "ConsumerSecret";
 	public static String PREFS_KEY_USER_TOKEN = "UserToken";

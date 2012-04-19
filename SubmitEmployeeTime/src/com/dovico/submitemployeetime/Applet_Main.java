@@ -24,9 +24,14 @@ public class Applet_Main extends JApplet {
 	// Action Listener for when the settings are changed (callback function from the CommonUILogic class)
 	private ActionListener GetActionListenerForSettingsChange(){
 		return new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {  
+			public void actionPerformed(ActionEvent arg0) {
+				// Grab the current Consumer Secret we have. If it matches our constant then clear the variable so that we don't save the value to a cookie potentially
+				// exposing sensitive information
+				String sConsumerSecretToSave = m_UILogic.getConsumerSecret();
+				if(sConsumerSecretToSave.equals(Constants.CONSUMER_SECRET_API_TOKEN)){ sConsumerSecretToSave = ""; }
+				
 				// Call our Save Settings function
-				saveSettings(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), Long.toString(m_UILogic.getEmployeeID()), m_UILogic.getEmployeeFirstName(), 
+				saveSettings(sConsumerSecretToSave, m_UILogic.getDataAccessToken(), Long.toString(m_UILogic.getEmployeeID()), m_UILogic.getEmployeeFirstName(), 
 						m_UILogic.getEmployeeLastName());
 			}
 		};
@@ -52,7 +57,7 @@ public class Applet_Main extends JApplet {
 	
 	
 	// Called when the user clicks on the Main tab after having been on the Settings tab and everything validated OK 
-	public void saveSettings(String sConsumerSecret, String sUserToken, String sEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) {
+	private void saveSettings(String sConsumerSecret, String sUserToken, String sEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) {
 		try{
 			// Tell the JS to save the settings data to a cookie or localStorage
 			JSObject winMain = JSObject.getWindow(this);

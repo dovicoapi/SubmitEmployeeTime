@@ -70,9 +70,15 @@ public class Form_Main {
 	private ActionListener getActionListenerForSettingsChange(){
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {  
+				// Grab the current Consumer Secret we have. If it matches our constant then clear the variable so that we don't save the value potentially
+				// exposing sensitive information
+				String sConsumerSecretToSave = m_UILogic.getConsumerSecret();
+				if(sConsumerSecretToSave.equals(Constants.CONSUMER_SECRET_API_TOKEN)){ sConsumerSecretToSave = ""; }
+
+				
 				// Save the settings
 				Preferences prefs = Preferences.userNodeForPackage(Form_Main.class);
-				prefs.put(Constants.PREFS_KEY_CONSUMER_SECRET, m_UILogic.getConsumerSecret());
+				prefs.put(Constants.PREFS_KEY_CONSUMER_SECRET, sConsumerSecretToSave);
 				prefs.put(Constants.PREFS_KEY_USER_TOKEN, m_UILogic.getDataAccessToken());
 				prefs.put(Constants.PREFS_KEY_EMPLOYEE_ID, Long.toString(m_UILogic.getEmployeeID()));
 				prefs.put(Constants.PREFS_KEY_EMPLOYEE_FIRST, m_UILogic.getEmployeeFirstName());
