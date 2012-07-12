@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.*;
 
+import com.dovico.commonlibrary.CPanel_About;
+
 
 public class CCommonUILogic {
 	// Listener from the UI class that gets called when the settings data has changed so that it can update its UI as need be
@@ -13,9 +15,9 @@ public class CCommonUILogic {
 	
 	private JTabbedPane m_pTabControl = null;
 	
-	private CPanel_TimeEntries m_pTimeEntriesTab = null;
-	
+	private CPanel_TimeEntries m_pTimeEntriesTab = null;	
 	private CPanel_SettingsEx m_pSettingsTab = null;
+	private CPanel_About m_pAboutTab = null;
 	private int m_iPreviousTabIndex = -1;
 	private int m_iSettingsTabIndex = 1;
 	
@@ -45,8 +47,7 @@ public class CCommonUILogic {
 			catch (InstantiationException e2) { }
 			catch (IllegalAccessException e2) { }
 		} // End of the catch (Exception e) statement.
-
-		
+			
 		
 		// Remember the action listener for when the settings are changed (so that we can tell the proper class that the settings have changed and they need to be
 		// saved
@@ -78,6 +79,10 @@ public class CCommonUILogic {
 		// Create our Settings Tab panel and add it to our tab control
 		m_pSettingsTab = new CPanel_SettingsEx(); 
 		m_pTabControl.addTab("Settings", null, m_pSettingsTab, null);
+		
+		// Create our About Tab panel and add it to our tab control
+		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.1"); 
+		m_pTabControl.addTab("About", null, m_pAboutTab, null);
 	}
 	
 	
