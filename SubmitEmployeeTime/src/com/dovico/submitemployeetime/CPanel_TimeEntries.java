@@ -1,6 +1,11 @@
 package com.dovico.submitemployeetime;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -74,13 +79,21 @@ public class CPanel_TimeEntries extends JPanel {
 		m_ProjectTaskCellEditor = new CTableCellEditorAssignmentPicker(this.getParent());
 		m_DateCellEditor = new CTableCellEditorDatePicker(this.getParent());
 	
-		setLayout(null);
 		
+		// Create a panel that all of our controls will be added to (tried adding the controls directly to the form and everything was centered. I now set the
+		// form to be border layout and position this to be at the top)		
+		JPanel pControlContainer = new JPanel(new GridBagLayout());		
 		
+		// Our constraint object for indicating how we'd like each control placed, how it resizes to fit, margins, padding, etc
+		GridBagConstraints gbcConstraints = new GridBagConstraints();
+		
+		// ------------
+		// Row 1:
+		// ------------
 		JLabel lblTimeEntriesFor = new JLabel("Time entries for");
 		lblTimeEntriesFor.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblTimeEntriesFor.setBounds(10, 11, 82, 14);
-		add(lblTimeEntriesFor);
+		adjustGridBagConstraints(0, 0, GridBagConstraints.WEST, new Insets(8, 8, 0, 8), gbcConstraints);
+		pControlContainer.add(lblTimeEntriesFor, gbcConstraints);
 		
 		// Employee drop-down list
 		m_EmployeeDataModel = new CEmployeeComboBoxModel();
@@ -89,37 +102,65 @@ public class CPanel_TimeEntries extends JPanel {
 		m_ddlEmployees.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) { OnSelChanged_ddlEmployees(); }
 		});
-		m_ddlEmployees.setBounds(89, 8, 343, 20);
-		add(m_ddlEmployees);
+		adjustGridBagConstraints(1, 0, GridBagConstraints.CENTER, new Insets(8, 0, 0, 0), GridBagConstraints.HORIZONTAL, 3, 0.0, gbcConstraints);
+		pControlContainer.add(m_ddlEmployees, gbcConstraints);
 		
+		// Loading indicator
+		m_pLoading = new JPanel();
+		m_pLoading.setBackground(Color.BLUE);
+		adjustGridBagConstraints(5, 0, GridBagConstraints.EAST, new Insets(8, 0, 0, 8), gbcConstraints);
+		pControlContainer.add(m_pLoading, gbcConstraints);
+		
+		JLabel lblProcessingoneMomentPlease = new JLabel("Processing...One Moment Please");
+		lblProcessingoneMomentPlease.setFont(new Font("Arial", Font.PLAIN, 11));
+		lblProcessingoneMomentPlease.setForeground(Color.WHITE);
+		m_pLoading.add(lblProcessingoneMomentPlease);
+		
+		
+		// ------------
+		// Row 2:
+		// ------------
 		JLabel lblForTheDate = new JLabel("for the date range of");
 		lblForTheDate.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblForTheDate.setBounds(10, 40, 113, 14);
-		add(lblForTheDate);
+		adjustGridBagConstraints(0, 1, GridBagConstraints.WEST, new Insets(10, 8, 0, 8), gbcConstraints);
+		pControlContainer.add(lblForTheDate, gbcConstraints);
 				
 		m_cmdDateRangeStart = new JButton(Constants.NO_DATE_SELECTED);
-		m_cmdDateRangeStart.setBounds(133, 36, 132, 23);
 		m_cmdDateRangeStart.setFont(new Font("Arial", Font.PLAIN, 11));
 		m_cmdDateRangeStart.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent arg0) { OnClick_cmdDateRangeStart(); } 
 		});
-		add(m_cmdDateRangeStart);
+		
+		// Set the Start date button to a fixed width (otherwise, the width keeps adjusting every time we set the new caption)
+		Dimension preferredSize = m_cmdDateRangeStart.getPreferredSize();
+		preferredSize.width = 130; 
+		m_cmdDateRangeStart.setPreferredSize(preferredSize);
+		adjustGridBagConstraints(1, 1, GridBagConstraints.CENTER, new Insets(10, 0, 0, 0), gbcConstraints);
+		pControlContainer.add(m_cmdDateRangeStart, gbcConstraints);
 				
 		JLabel lblTo = new JLabel("to");
 		lblTo.setFont(new Font("Arial", Font.PLAIN, 11));
 		lblTo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTo.setBounds(275, 40, 16, 14);
-		add(lblTo);
+		adjustGridBagConstraints(2, 1, GridBagConstraints.CENTER, new Insets(10, 8, 0, 8), gbcConstraints);
+		pControlContainer.add(lblTo, gbcConstraints);
 		
 		m_cmdDateRangeFinish = new JButton(Constants.NO_DATE_SELECTED);
-		m_cmdDateRangeFinish.setBounds(301, 36, 131, 23);
 		m_cmdDateRangeFinish.setFont(new Font("Arial", Font.PLAIN, 11));
 		m_cmdDateRangeFinish.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent arg0) { OnClick_cmdDateRangeFinish(); } 
 		});
-		add(m_cmdDateRangeFinish);
+		
+		// Set the Start date button to a fixed width (otherwise, the width keeps adjusting every time we set the new caption)
+		preferredSize = m_cmdDateRangeFinish.getPreferredSize();
+		preferredSize.width = 130; 
+		m_cmdDateRangeFinish.setPreferredSize(preferredSize);
+		adjustGridBagConstraints(3, 1, GridBagConstraints.CENTER, new Insets(10, 0, 0, 0), gbcConstraints);
+		pControlContainer.add(m_cmdDateRangeFinish, gbcConstraints);
 		
 		
+		// ------------
+		// Row 3:
+		// ------------
 		// Make sure the time entry grid's table model is constructed with the necessary column information
 		buildTableModelAndCreateTable();
 		
@@ -129,38 +170,70 @@ public class CPanel_TimeEntries extends JPanel {
 		m_tblTimeEntries.setShowGrid(false);		
 
 		JScrollPane spTimeEntries = new JScrollPane(m_tblTimeEntries);
-		m_tblTimeEntries.setFillsViewportHeight(true);
 		spTimeEntries.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		spTimeEntries.setBounds(10, 70, 696, 304);
-		add(spTimeEntries);
+		
+		// For some reason with the GridBagLayout the height of the grid was way too tall. This is a hack to keep the height reasonable
+		preferredSize = spTimeEntries.getPreferredSize();
+		preferredSize.height = 300;
+		spTimeEntries.setPreferredSize(preferredSize);
+
+		adjustGridBagConstraints(0, 2, GridBagConstraints.CENTER, new Insets(10, 8, 0, 8), GridBagConstraints.BOTH, 6, 1.0, gbcConstraints);
+		pControlContainer.add(spTimeEntries, gbcConstraints);
+		
+		
+		// ------------
+		// Row 4:
+		// ------------
+		JLabel lblCanEdit = new JLabel("* You can edit the cells of the column indicated");
+		lblCanEdit.setFont(new Font("Arial", Font.PLAIN, 11));
+		adjustGridBagConstraints(0, 3, GridBagConstraints.SOUTHWEST, new Insets(10, 8, 0, 0), GridBagConstraints.NONE, 4, 0.0, gbcConstraints);
+		pControlContainer.add(lblCanEdit, gbcConstraints);
 		
 		
 		// Button to trigger the submit of time for the selected employee's date range
 		m_cmdSubmitTime = new JButton("Submit");
 		m_cmdSubmitTime.setFont(new Font("Arial", Font.PLAIN, 11));
-		m_cmdSubmitTime.setBounds(617, 385, 89, 23);
 		m_cmdSubmitTime.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent arg0) { OnClick_cmdSubmitTime(); } 
 		});
-		add(m_cmdSubmitTime);
+		adjustGridBagConstraints(5, 3, GridBagConstraints.EAST, new Insets(10, 0, 0, 8), gbcConstraints);
+		pControlContainer.add(m_cmdSubmitTime, gbcConstraints);	
+					
 		
-		
-		// Loading indicator
-		m_pLoading = new JPanel();
-		m_pLoading.setBackground(Color.BLUE);
-		m_pLoading.setBounds(503, 11, 204, 23);
-		add(m_pLoading);
-		
-		JLabel lblProcessingoneMomentPlease = new JLabel("Processing...One Moment Please");
-		lblProcessingoneMomentPlease.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblProcessingoneMomentPlease.setForeground(Color.WHITE);
-		m_pLoading.add(lblProcessingoneMomentPlease);
-		
-		
-		JLabel lblCanEdit = new JLabel("* You can edit the cells of the column indicated");
-		lblCanEdit.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblCanEdit.setBounds(10, 385, 232, 14);
-		add(lblCanEdit);
+		// The controls were showing up vertically and horizontally centered (i fixed the horizontal issue by setting the grid's weightx to 1.0 but to get around
+		// the vertical issue, I use BorderLayout for the main form and tell the container panel to be at the top) 
+		this.setLayout(new BorderLayout());
+		this.add(pControlContainer, BorderLayout.NORTH);
+	}
+	
+	
+	
+	// Overloaded helper to adjust the GridBagConstraints
+	//
+	// iGridX is zero-based
+	// iGridY is zero-based
+	// The default anchor is: GridBagConstraints.CENTER
+	// The default insets is: new Insets(0, 0, 0, 0) 	
+	private void adjustGridBagConstraints(int iGridX, int iGridY, int iAnchor, Insets iInsets, GridBagConstraints gbcConstraints){
+		// Call our overloaded method passing in defaults for the fill, colspan (gridwidth) and weightx values.
+		adjustGridBagConstraints(iGridX, iGridY, iAnchor, iInsets, GridBagConstraints.NONE, 1, 0.0, gbcConstraints);
+	}
+	
+	
+	// Overloaded helper to adjust the GridBagConstraints
+	//
+	// The default fill is: GridBagConstraints.NONE
+	// The default colspan (gridwidth) is: 1
+	// The default WeightX is: 0.0
+	private void adjustGridBagConstraints(int iGridX, int iGridY, int iAnchor, Insets iInsets, int iFill, int iColSpan, double dWeightX, 
+	GridBagConstraints gbcConstraints){
+		gbcConstraints.gridx = iGridX;
+		gbcConstraints.gridy = iGridY;
+		gbcConstraints.anchor = iAnchor;
+		gbcConstraints.insets = iInsets;
+		gbcConstraints.fill = iFill;
+		gbcConstraints.gridwidth = iColSpan;
+		gbcConstraints.weightx = dWeightX;
 	}
 	
 		
@@ -473,6 +546,7 @@ public class CPanel_TimeEntries extends JPanel {
 				return false;
 			}
 		};
+		m_tblTimeEntries.setFillsViewportHeight(true);
 		
 		
 		// Grab the column model and then set up the special project/task editor on the 3rd column (Project - Task) and 4th column (Date) 

@@ -1,5 +1,6 @@
 package com.dovico.submitemployeetime;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +59,8 @@ public class Form_Main {
 		m_frmSubmitEmployeeTime.setBounds(100, 100, 740, 485);
 		m_frmSubmitEmployeeTime.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		// Prevent the application from being resized too small (causes the layout to mess up for the CPanel_TimeEntries if the width passes a certain point)
+		m_frmSubmitEmployeeTime.setMinimumSize(new Dimension(600, 485)); 
 		
 		// Have the tab control, and related controls, created (NOTE: If you pass the content pane in as a parameter, it works at run-time but you can't use the
 		// Google WindowBuilder Design tab - nothing shows up. When you return the root control, the JTabbedPane in this case, add add it to the content pane then

@@ -81,7 +81,7 @@ public class CCommonUILogic {
 		m_pTabControl.addTab("Settings", null, m_pSettingsTab, null);
 		
 		// Create our About Tab panel and add it to our tab control
-		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.1"); 
+		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.2"); 
 		m_pTabControl.addTab("About", null, m_pAboutTab, null);
 	}
 	
