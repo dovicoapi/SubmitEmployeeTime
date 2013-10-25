@@ -7,6 +7,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.*;
 
 import com.dovico.commonlibrary.CPanel_About;
+import com.dovico.commonlibrary.CPanel_Settings;
 
 
 public class CCommonUILogic {
@@ -21,7 +22,10 @@ public class CCommonUILogic {
 	private int m_iPreviousTabIndex = -1;
 	private int m_iSettingsTabIndex = 1;
 	
-	private String m_sConsumerSecret = "";
+	
+	private String m_sCompanyName = "";
+	private String m_sUserName = "";
+	private String m_sPassword = "";
 	private String m_sDataAccessToken = "";
 	private Long m_lEmployeeID = null;
 	private String m_sEmployeeFirstName = "";
@@ -87,26 +91,28 @@ public class CCommonUILogic {
 	
 	
 	// Called when the form is first displayed (windowOpened event)
-	public void handlePageLoad(String sConsumerSecret, String sDataAccessToken, Long lEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) 
+	public void handlePageLoad(String sDataAccessToken, String sCompanyName, String sUserName, String sPassword, Long lEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) 
 	{ 
-		// Remember the preferences specified
-		m_sConsumerSecret = sConsumerSecret;
 		m_sDataAccessToken = sDataAccessToken;
+		m_sCompanyName = sCompanyName;
+		m_sUserName = sUserName;
+		m_sPassword = sPassword;
+		
 		m_lEmployeeID = lEmployeeID;
 		m_sEmployeeFirstName = sEmployeeFirstName;
 		m_sEmployeeLastName = sEmployeeLastName;
 		
 		// Determine if the tokens have values or not
-		boolean bIsConsumerSecretEmpty = m_sConsumerSecret.isEmpty();
+		//boolean bIsConsumerSecretEmpty = m_sConsumerSecret.isEmpty();
 		boolean bIsDataAccessTokenEmpty = m_sDataAccessToken.isEmpty();
 		
 		
 		// Tell the Settings pane what the settings are (we are not concerned about the logged in employee's First and Last name in this app but rather than have
 		// to write upgrade code, like the code to come below, if that every changes, we grab and store the values just in case)
-		m_pSettingsTab.setSettingsData(m_sConsumerSecret, m_sDataAccessToken, Constants.API_VERSION_TARGETED, m_lEmployeeID, m_sEmployeeFirstName, m_sEmployeeLastName);
+		m_pSettingsTab.setSettingsData(Constants.CONSUMER_SECRET_API_TOKEN, sCompanyName, sUserName, sPassword, Constants.API_VERSION_TARGETED, m_lEmployeeID, m_sEmployeeFirstName, m_sEmployeeLastName);
 		
 		// If either token value is empty then...
-		if(bIsConsumerSecretEmpty || bIsDataAccessTokenEmpty) {
+		if(bIsDataAccessTokenEmpty) {
 			// Make sure the Settings tab is selected
 			m_iSettingsTabIndex = 1;
 			m_pTabControl.setSelectedIndex(m_iSettingsTabIndex);
@@ -124,11 +130,15 @@ public class CCommonUILogic {
 	    {
 	    	// If everything validates OK for the Settings tab then...
 	    	if(m_pSettingsTab.validateSettingsData()) 
-	    	{		        				        		
+	    	{
+	    		
 	    		// Grab the new settings values
-	    		m_sConsumerSecret = m_pSettingsTab.getConsumerSecret();
+	    		//m_sConsumerSecret = m_pSettingsTab.getConsumerSecret();
 	    		m_sDataAccessToken = m_pSettingsTab.getDataAccessToken();
-	    		m_lEmployeeID = m_pSettingsTab.getEmployeeID();
+	    		m_sCompanyName = m_pSettingsTab.getCompanyName();
+	    		m_sUserName = m_pSettingsTab.getUserName();
+	    		
+	    		this.m_lEmployeeID = m_pSettingsTab.getEmployeeID();
 	    		m_sEmployeeFirstName = m_pSettingsTab.getEmployeeFirstName();
 				m_sEmployeeLastName = m_pSettingsTab.getEmployeeLastName();
 	    		
@@ -155,7 +165,10 @@ public class CCommonUILogic {
 	
 		
 	// Methods returning the setting values
-	public String getConsumerSecret() { return m_sConsumerSecret; }
+	public String getCompanyName() { return m_sCompanyName; }
+	public String getUserName() { return m_sUserName; }
+	public String getPassword() { return m_sPassword; }
+	public String getConsumerSecret() { return Constants.CONSUMER_SECRET_API_TOKEN; }
 	public String getDataAccessToken() { return m_sDataAccessToken; }
 	public Long getEmployeeID() { return m_lEmployeeID; }
 	public String getEmployeeFirstName() { return m_sEmployeeFirstName; }

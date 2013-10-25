@@ -333,7 +333,7 @@ public class CPanel_TimeEntries extends JPanel {
 		// Load in the employee data (we pass in the logged in employee's information in the event he/she does not have read access to Employees so that the drop-down
 		// defaults to them - We also indicate to aRequestResult that we don't want it to display an error...loadEmployeeData is going to customize it if the request 
 		// fails)
-		APIRequestResult aRequestResult = new APIRequestResult(m_UILogic.getConsumerSecret(), m_UILogic.getDataAccessToken(), Constants.API_VERSION_TARGETED, false);
+		APIRequestResult aRequestResult = new APIRequestResult(Constants.CONSUMER_SECRET_API_TOKEN, m_UILogic.getDataAccessToken(), Constants.API_VERSION_TARGETED, false);
 		m_EmployeeDataModel.loadEmployeeData(m_UILogic.getEmployeeID(), m_UILogic.getEmployeeLastName(), m_UILogic.getEmployeeFirstName(), aRequestResult);
 
 		// If there were employees loaded, cause the first item in the list to be selected by default

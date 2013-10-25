@@ -46,13 +46,18 @@ public class Form_Main {
 			{
 				// Grab the Preferences values (have to do this here rather than in the CommonUILogic since this will break an unsigned applet)
 				Preferences prefs = Preferences.userNodeForPackage(Form_Main.class);
-				String sConsumerSecret = prefs.get(Constants.PREFS_KEY_CONSUMER_SECRET, "");
+				
+				String sCompanyName = prefs.get("CompanyName", "");;
+				String sUserName = prefs.get("UserName", "");
+				String sPassword = "";
+				
+				//String sConsumerSecret = prefs.get(Constants.PREFS_KEY_CONSUMER_SECRET, "");
 				String sDataAccessToken = prefs.get(Constants.PREFS_KEY_USER_TOKEN, "");
 				String sEmployeeID = prefs.get(Constants.PREFS_KEY_EMPLOYEE_ID, "0");
 				String sEmployeeFirstName = prefs.get(Constants.PREFS_KEY_EMPLOYEE_FIRST, "");
 				String sEmployeeLastName = prefs.get(Constants.PREFS_KEY_EMPLOYEE_LAST, "");
 												
-				m_UILogic.handlePageLoad(sConsumerSecret, sDataAccessToken, Long.valueOf(sEmployeeID), sEmployeeFirstName, sEmployeeLastName); 
+				m_UILogic.handlePageLoad(sDataAccessToken, sCompanyName, sUserName, sPassword, Long.valueOf(sEmployeeID), sEmployeeFirstName, sEmployeeLastName); 
 			}
 		});
 		m_frmSubmitEmployeeTime.setTitle("Submit Employee Time");
@@ -81,7 +86,10 @@ public class Form_Main {
 				
 				// Save the settings
 				Preferences prefs = Preferences.userNodeForPackage(Form_Main.class);
-				prefs.put(Constants.PREFS_KEY_CONSUMER_SECRET, sConsumerSecretToSave);
+				prefs.put("CompanyName", m_UILogic.getCompanyName());
+				prefs.put("UserName",  m_UILogic.getUserName());
+				
+				//prefs.put(Constants.PREFS_KEY_CONSUMER_SECRET, sConsumerSecretToSave);
 				prefs.put(Constants.PREFS_KEY_USER_TOKEN, m_UILogic.getDataAccessToken());
 				prefs.put(Constants.PREFS_KEY_EMPLOYEE_ID, Long.toString(m_UILogic.getEmployeeID()));
 				prefs.put(Constants.PREFS_KEY_EMPLOYEE_FIRST, m_UILogic.getEmployeeFirstName());

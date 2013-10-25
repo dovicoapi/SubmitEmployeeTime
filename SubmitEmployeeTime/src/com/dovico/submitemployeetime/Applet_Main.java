@@ -31,7 +31,7 @@ public class Applet_Main extends JApplet {
 				if(sConsumerSecretToSave.equals(Constants.CONSUMER_SECRET_API_TOKEN)){ sConsumerSecretToSave = ""; }
 				
 				// Call our Save Settings function
-				saveSettings(sConsumerSecretToSave, m_UILogic.getDataAccessToken(), Long.toString(m_UILogic.getEmployeeID()), m_UILogic.getEmployeeFirstName(), 
+				saveSettings(m_UILogic.getDataAccessToken(), m_UILogic.getCompanyName(), m_UILogic.getUserName(), Long.toString(m_UILogic.getEmployeeID()), m_UILogic.getEmployeeFirstName(), 
 						m_UILogic.getEmployeeLastName());
 			}
 		};
@@ -51,17 +51,17 @@ public class Applet_Main extends JApplet {
 	
 	// Called by the JavaScript to tell us what the settings are from the cookie/localStorage (without signing this app we don't have permission to access Preferences
 	// so we're doing a workaround instead) 
-	public void JSCallBackReturningSettingsData(String sConsumerSecret, String sUserToken, String sEmployeeID, String sEmployeeFirstName, String sEmployeeLastName){
-		m_UILogic.handlePageLoad(sConsumerSecret, sUserToken, Long.valueOf(sEmployeeID), sEmployeeFirstName, sEmployeeLastName);
+	public void JSCallBackReturningSettingsData(String sUserToken, String sCompanyName, String sUserName, String sPassword, String sEmployeeID, String sEmployeeFirstName, String sEmployeeLastName){
+		m_UILogic.handlePageLoad(sUserToken, sCompanyName, sUserName, sPassword, Long.valueOf(sEmployeeID), sEmployeeFirstName, sEmployeeLastName);
 	}
 	
 	
 	// Called when the user clicks on the Main tab after having been on the Settings tab and everything validated OK 
-	private void saveSettings(String sConsumerSecret, String sUserToken, String sEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) {
+	private void saveSettings(String sUserToken, String sCompanyName, String sUserName, String sEmployeeID, String sEmployeeFirstName, String sEmployeeLastName) {
 		try{
 			// Tell the JS to save the settings data to a cookie or localStorage
 			JSObject winMain = JSObject.getWindow(this);
-			if(winMain != null){  winMain.call("saveTheSettingsData", new String[] { sConsumerSecret, sUserToken, sEmployeeID, sEmployeeFirstName, sEmployeeLastName }); }	
+			if(winMain != null){  winMain.call("saveTheSettingsData", new String[] { sUserToken, sCompanyName, sUserName, sEmployeeID, sEmployeeFirstName, sEmployeeLastName }); }	
 		}
 		catch(Throwable e){}
 	}
