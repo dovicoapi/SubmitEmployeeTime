@@ -7,7 +7,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.*;
 
 import com.dovico.commonlibrary.CPanel_About;
-import com.dovico.commonlibrary.CPanel_Settings;
 
 
 public class CCommonUILogic {
@@ -85,7 +84,7 @@ public class CCommonUILogic {
 		m_pTabControl.addTab("Settings", null, m_pSettingsTab, null);
 		
 		// Create our About Tab panel and add it to our tab control
-		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.3"); 
+		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.4"); 
 		m_pTabControl.addTab("About", null, m_pAboutTab, null);
 	}
 	
@@ -109,7 +108,7 @@ public class CCommonUILogic {
 		
 		// Tell the Settings pane what the settings are (we are not concerned about the logged in employee's First and Last name in this app but rather than have
 		// to write upgrade code, like the code to come below, if that every changes, we grab and store the values just in case)
-		m_pSettingsTab.setSettingsData(Constants.CONSUMER_SECRET_API_TOKEN, sCompanyName, sUserName, sPassword, Constants.API_VERSION_TARGETED, m_lEmployeeID, m_sEmployeeFirstName, m_sEmployeeLastName);
+		m_pSettingsTab.setSettingsData(Constants.CONSUMER_SECRET_API_TOKEN, sDataAccessToken, sCompanyName, sUserName, sPassword, Constants.API_VERSION_TARGETED, m_lEmployeeID, m_sEmployeeFirstName, m_sEmployeeLastName);
 		
 		// If either token value is empty then...
 		if(bIsDataAccessTokenEmpty) {
@@ -131,9 +130,7 @@ public class CCommonUILogic {
 	    	// If everything validates OK for the Settings tab then...
 	    	if(m_pSettingsTab.validateSettingsData()) 
 	    	{
-	    		
 	    		// Grab the new settings values
-	    		//m_sConsumerSecret = m_pSettingsTab.getConsumerSecret();
 	    		m_sDataAccessToken = m_pSettingsTab.getDataAccessToken();
 	    		m_sCompanyName = m_pSettingsTab.getCompanyName();
 	    		m_sUserName = m_pSettingsTab.getUserName();

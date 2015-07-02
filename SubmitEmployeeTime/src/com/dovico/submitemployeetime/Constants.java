@@ -25,7 +25,7 @@ public class Constants {
 	public static String XML_DATE_FORMAT = "yyyy-MM-dd";
 	
 	// The REST API version that we are targeting
-	public static String API_VERSION_TARGETED = "2";
+	public static String API_VERSION_TARGETED = "5";
 	
 	public static String NO_DATE_SELECTED = "[Not Selected]";
 	
