@@ -84,7 +84,7 @@ public class CCommonUILogic {
 		m_pTabControl.addTab("Settings", null, m_pSettingsTab, null);
 		
 		// Create our About Tab panel and add it to our tab control
-		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.4"); 
+		m_pAboutTab = new CPanel_About("Submit Employee Time", "1.5"); 
 		m_pTabControl.addTab("About", null, m_pAboutTab, null);
 	}
 	
@@ -135,7 +135,7 @@ public class CCommonUILogic {
 	    		m_sCompanyName = m_pSettingsTab.getCompanyName();
 	    		m_sUserName = m_pSettingsTab.getUserName();
 	    		
-	    		this.m_lEmployeeID = m_pSettingsTab.getEmployeeID();
+	    		m_lEmployeeID = m_pSettingsTab.getEmployeeID();
 	    		m_sEmployeeFirstName = m_pSettingsTab.getEmployeeFirstName();
 				m_sEmployeeLastName = m_pSettingsTab.getEmployeeLastName();
 	    		

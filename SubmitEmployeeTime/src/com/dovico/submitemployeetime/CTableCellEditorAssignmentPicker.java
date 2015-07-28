@@ -38,8 +38,9 @@ public class CTableCellEditorAssignmentPicker extends AbstractCellEditor impleme
 	
 	
 	// Since we're dealing with multiple employees, each time an employee selection is changed, we want to tell the tree picker to reload with the new employee's data 
-	public void loadAssignmentsForEmployee(Long lEmployeeID, String sConsumerSecret, String sDataAccessToken, String sApiVersionTargeted){ 
-		m_dlgDialog.loadAssignmentsForEmployee(lEmployeeID, sConsumerSecret, sDataAccessToken, sApiVersionTargeted); 
+	public void loadAssignmentsForEmployee(Long lEmployeeID, boolean bIncludeForTimeEntryQueryString, String sConsumerSecret, 
+			String sDataAccessToken, String sApiVersionTargeted){
+		m_dlgDialog.loadAssignmentsForEmployee(lEmployeeID, bIncludeForTimeEntryQueryString, sConsumerSecret, sDataAccessToken, sApiVersionTargeted); 
 	}
 	
 	

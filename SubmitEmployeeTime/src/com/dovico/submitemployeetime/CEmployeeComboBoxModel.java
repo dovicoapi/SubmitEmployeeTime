@@ -30,17 +30,22 @@ public class CEmployeeComboBoxModel implements ComboBoxModel {
 	
 	// Main method to load in the requested page of Employee data from the REST API	
 	public void loadEmployeeData(Long lLoggedInEmployeeID, String sLoggedInEmployeeLastName, String sLoggedInEmployeeFirstName, APIRequestResult aRequestResult) {	
-		// Load in the current list of employees. If there was an error (logged in user does not have permission to the Employee data...could be a TET-Only user) 
-		// then...
+		// Load in the current list of employees. If there was an error (logged in user does not have permission to the Employee data...
+		// could be a TET-Only user) or the list is just empty (has access to the employee view but limited access has all employees 
+		// filtered out) then...
 		ArrayList<CEmployee> lstEmployees = CEmployee.getList(aRequestResult);
-		if(aRequestResult.getHadRequestError()) {
+		boolean bHasRequestError = aRequestResult.getHadRequestError();
+		if(bHasRequestError || lstEmployees == null || lstEmployees.isEmpty()) {
 			// Create a list (if the request to the API fails, null is returned for the list) and add the employee who is logged in to the list
 			lstEmployees = new ArrayList<CEmployee>();
 			lstEmployees.add(new CEmployee(lLoggedInEmployeeID, sLoggedInEmployeeLastName, sLoggedInEmployeeFirstName));
 			
 			// Tell the user of the error and what we did about it
-			JOptionPane.showMessageDialog(null, String.format("The following error was returned when trying to retrieve a list of all Employees in the system:\n\n%s\n\n\nThe Employee drop-down will only contain your name.", aRequestResult.getRequestErrorMessage()), "Error", JOptionPane.ERROR_MESSAGE);
-		} // End if(aRequestResult.getHadRequestError())
+			String sErrorMsg = "";
+			if(bHasRequestError){sErrorMsg = String.format("The following error was returned when trying to retrieve a list of all Employees in the system:\n\n%s\n\n\nThe Employee drop-down will only contain your name.", aRequestResult.getRequestErrorMessage()); }
+			else { sErrorMsg = "We were unable to retrieve a list of all Employees in the system. The Employee drop-down will only contain your name."; } 
+			JOptionPane.showMessageDialog(null, sErrorMsg, "Error", JOptionPane.ERROR_MESSAGE);
+		} // End if(bHasRequestError || lstEmployees == null || lstEmployees.isEmpty())
 		
 		// Add the list of employees, that we have so far, to our in-memory list
 		m_lstEmployees.addAll(lstEmployees);		

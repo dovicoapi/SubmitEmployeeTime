@@ -412,8 +412,12 @@ public class CPanel_TimeEntries extends JPanel {
 			} // End of the for(int iIndex = 0; iIndex < iCount; iIndex++) loop.
 			
 			
+			// Include the ForTimeEntry query string in the Assignment GET request if the selected employee is the logged in employee. 
+			// Otherwise, we don't want the query string included.
+			boolean bIncludeForTimeEntryQueryString = (lEmployeeID == m_UILogic.getEmployeeID());
+
 			// Tell the Project/Task picker of the new employee
-			m_ProjectTaskCellEditor.loadAssignmentsForEmployee(lEmployeeID, sConsumerSecret, sDataAccessToken, sApiVersionTargeted);
+			m_ProjectTaskCellEditor.loadAssignmentsForEmployee(lEmployeeID, bIncludeForTimeEntryQueryString, sConsumerSecret, sDataAccessToken, sApiVersionTargeted);
 		} // End if(ValidateDateRange())
 		
 		
